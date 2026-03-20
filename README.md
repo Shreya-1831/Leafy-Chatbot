@@ -126,6 +126,7 @@ App runs at `http://localhost:5173`
 
 | Variable       | Description                            |
 | -------------- | -------------------------------------- |
+| `GROQ_API_KEY` | Your Groq API Key |
 | `MONGO_URI`  | MongoDB connection string              |
 | `SECRET_KEY` | JWT signing secret (keep this private) |
 
@@ -134,6 +135,7 @@ App runs at `http://localhost:5173`
 | Variable         | Description                                     |
 | ---------------- | ----------------------------------------------- |
 | `VITE_API_URL` | Backend URL (default:`http://localhost:8000`) |
+| `VITE_OPENWEATHER_API_KEY` | Your OpenWeatherAPI Key |
 
 ---
 
