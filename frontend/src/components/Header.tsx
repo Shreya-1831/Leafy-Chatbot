@@ -27,7 +27,7 @@ const Header: React.FC = () => {
           </button>
           <div className="flex items-center space-x-2 text-leaf-100">
             <User size={18} />
-            <span className="text-sm font-medium hidden sm:inline">{user?.username}</span>
+            <span className="text-sm font-medium hidden sm:inline">{user?.email}</span>
           </div>
           <button
             onClick={logout}
