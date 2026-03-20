@@ -70,3 +70,4 @@ passlib[bcrypt]==1.7.4
 
 # PDF Generation
 reportlab==4.1.0
+email-validator==2.1.1
