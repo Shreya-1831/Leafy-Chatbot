@@ -1,0 +1,94 @@
+# ─── Python / FastAPI Backend ─────────────────────────────────────────────────
+
+# Virtual environment
+venv/
+env/
+.env
+*.env
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# ML model files (large binaries — store in Git LFS or separately)
+leafy-backend/ml/*.h5
+leafy-backend/ml/*.pt
+leafy-backend/ml/*.pth
+leafy-backend/ml/*.pkl
+leafy-backend/ml/*.tflite
+leafy-backend/ml/*.onnx
+
+# Uploaded images & generated files
+leafy-backend/images/
+leafy-backend/static/
+
+# Pytest / coverage
+.pytest_cache/
+htmlcov/
+.coverage
+coverage.xml
+
+# ─── React / Vite Frontend ────────────────────────────────────────────────────
+
+# Dependencies
+frontend/node_modules/
+
+# Build output
+frontend/dist/
+frontend/build/
+
+# Environment variables
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+# Vite cache
+frontend/.vite/
+
+# TypeScript build info
+frontend/*.tsbuildinfo
+frontend/tsconfig.tsbuildinfo
+
+# ─── Editor & OS ──────────────────────────────────────────────────────────────
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# JetBrains
+.idea/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+
+# ─── Logs ─────────────────────────────────────────────────────────────────────
+
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ─── Misc ─────────────────────────────────────────────────────────────────────
+
+# Secrets / keys — never commit these
+*.pem
+*.key
+*.cert
+secrets.json
