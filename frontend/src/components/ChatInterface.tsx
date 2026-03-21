@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, RefreshCw, Plus, Trash2 } from 'lucide-react';
+import { Send, RefreshCw, Plus, Trash2, PanelLeftOpen, PanelLeftClose } from 'lucide-react';
 import { useChat } from '../context/ChatContext';
 import ChatMessage from './ChatMessage';
 import { sendChatStream, fetchSessions, deleteSession, ChatSession } from '../services/api';
@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 
 const ChatInterface: React.FC = () => {
   const [input, setInput] = useState('');
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const {
     messages, isLoading, addMessage, updateMessage, clearChat, clearMessages,
     predictionResult, setPredictionResult, setIsLoading, currentSessionId, setCurrentSessionId,
@@ -18,13 +19,8 @@ const ChatInterface: React.FC = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  useEffect(() => {
-    loadSessions();
-  }, []);
-
-  useEffect(() => {
-    if (currentSessionId) loadSessions();
-  }, [currentSessionId]);
+  useEffect(() => { loadSessions(); }, []);
+  useEffect(() => { if (currentSessionId) loadSessions(); }, [currentSessionId]);
 
   const loadSessions = async () => {
     try {
@@ -35,9 +31,7 @@ const ChatInterface: React.FC = () => {
     }
   };
 
-  const handleNewChat = () => {
-    clearChat();
-  };
+  const handleNewChat = () => clearChat();
 
   const handleLoadSession = async (sessionId: string) => {
     if (sessionId === currentSessionId) return;
@@ -48,21 +42,19 @@ const ChatInterface: React.FC = () => {
       );
       if (!res.ok) throw new Error('Failed to fetch session');
       const data = await res.json();
-
       const msgs = data.messages ?? [];
       const prediction = data.prediction ?? null;
 
       setCurrentSessionId(sessionId);
       clearMessages();
 
-      // ✅ Restore prediction result so chat context & recommendations work
       if (prediction) {
         setPredictionResult({
           predicted_class: prediction.predicted_class,
           confidence: prediction.confidence,
           severity: prediction.severity,
-          plant_chatbot_response: '',  // ✅ fixes TS error — populated from chat messages
-          success: true,               // ✅ fixes TS error — required by PredictionResult
+          plant_chatbot_response: '',
+          success: true,
         });
       } else {
         setPredictionResult(null);
@@ -137,11 +129,18 @@ const ChatInterface: React.FC = () => {
   };
 
   return (
-    <div className="flex h-full">
-      {/* Sidebar */}
-      <div className="w-52 flex-shrink-0 bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 flex flex-col">
-        <div className="flex items-center justify-between px-3 py-3 border-b border-gray-200 dark:border-gray-700">
-          <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Chats</span>
+    <div className="flex h-full relative overflow-hidden">
+
+      {/* ── Sidebar ── */}
+      <div className={`
+        flex-shrink-0 flex flex-col
+        bg-gray-50 dark:bg-gray-900
+        border-r border-gray-200 dark:border-gray-700
+        transition-all duration-300 ease-in-out overflow-hidden
+        ${sidebarOpen ? 'w-56' : 'w-0'}
+      `}>
+        <div className="flex items-center justify-between px-3 py-3 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+          <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">Chats</span>
           <div className="flex items-center gap-1">
             <button
               onClick={handleNewChat}
@@ -163,8 +162,8 @@ const ChatInterface: React.FC = () => {
         <div className="flex-1 overflow-y-auto py-1">
           {sessions.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-32 px-4 text-center">
-              <p className="text-xs text-gray-400 dark:text-gray-600">No chats yet</p>
-              <p className="text-[11px] text-gray-300 dark:text-gray-700 mt-1">Start a conversation below</p>
+              <p className="text-xs text-gray-400 dark:text-gray-600 whitespace-nowrap">No chats yet</p>
+              <p className="text-[11px] text-gray-300 dark:text-gray-700 mt-1 whitespace-nowrap">Start a conversation</p>
             </div>
           ) : (
             sessions.map(s => (
@@ -195,8 +194,28 @@ const ChatInterface: React.FC = () => {
         </div>
       </div>
 
-      {/* Chat Area */}
+      {/* ── Chat Area ── */}
       <div className="flex flex-col flex-1 min-w-0">
+
+        {/* ── Top bar with toggle ── */}
+        <div className="flex items-center gap-2 px-3 py-2 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 flex-shrink-0">
+          <button
+            onClick={() => setSidebarOpen(o => !o)}
+            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-leaf-600 transition-colors"
+            title={sidebarOpen ? 'Close sidebar' : 'Open sidebar'}
+          >
+            {sidebarOpen ? <PanelLeftClose size={18} /> : <PanelLeftOpen size={18} />}
+          </button>
+          <button
+            onClick={handleNewChat}
+            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-leaf-600 transition-colors"
+            title="New Chat"
+          >
+            <Plus size={18} />
+          </button>
+        </div>
+
+        {/* ── Messages ── */}
         <div className="flex-1 overflow-y-auto p-4 bg-gradient-to-b from-leaf-50 to-white dark:from-gray-800 dark:to-gray-900">
           {messages.map(msg => (
             <ChatMessage key={msg.id} message={msg} />
@@ -214,6 +233,7 @@ const ChatInterface: React.FC = () => {
           )}
         </div>
 
+        {/* ── Input ── */}
         <form onSubmit={handleSendMessage} className="bg-white dark:bg-gray-800 p-3 border-t border-gray-200 dark:border-gray-700">
           <div className="flex gap-2">
             <input
