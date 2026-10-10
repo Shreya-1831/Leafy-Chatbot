@@ -174,9 +174,10 @@ def plant_chat(user_prompt: str, predicted_class=None, confidence=None):
     try:
         intent = detect_intent(user_prompt, predicted_class)
         system_prompt = CHAT_MODE if intent == "chat" else EMERGENCY_MODE if intent == "emergency" else DIAGNOSIS_MODE
-
+        print("🔥 CHATBOT FILE:", __file__)
+        print("🔥 ACTIVE GROQ MODEL: openai/gpt-oss-20b")
         response = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+            model="openai/gpt-oss-20b",
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": build_prompt(user_prompt, predicted_class, confidence)},
@@ -205,7 +206,7 @@ def plant_chat_stream(user_prompt: str, predicted_class=None, confidence=None):
         system_prompt = CHAT_MODE if intent == "chat" else EMERGENCY_MODE if intent == "emergency" else DIAGNOSIS_MODE
 
         stream = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+            model="openai/gpt-oss-20b",
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": build_prompt(user_prompt, predicted_class, confidence)},
